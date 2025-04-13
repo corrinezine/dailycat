@@ -81,35 +81,27 @@ const BLOCKS = [
 // 按照块的顺序重新排列向日葵位置
 const SUNFLOWER_POSITIONS = [
   // 块1 - 默认起点区域
-  { x: 134, y: 670 },
-  { x: 268, y: 670 },
+  { x: 192, y: 512 },  // 块1上方
   
   // 块2 - 启动区域
-  { x: 402, y: 402 },
-  { x: 536, y: 402 },
+  { x: 386, y: 384 },  // 块2上方
   
   // 块3 - 深度工作区域
-  { x: 536, y: 134 },
-  { x: 670, y: 134 },
-  { x: 804, y: 134 },
+  { x: 576, y: 256 },  // 块3上方
+  { x: 768, y: 256 },  // 块3上方（因为块3较宽）
   
   // 块4 - 午间空地区域
-  { x: 1072, y: 402 },
-  { x: 1206, y: 402 },
+  { x: 960, y: 384 },  // 块4上方
   
   // 块5 - 漫游玩耍区域
-  { x: 536, y: 871 },
-  { x: 670, y: 871 },
-  { x: 804, y: 871 },
-  { x: 938, y: 871 },
+  { x: 646, y: 576 },  // 块5上方
+  { x: 838, y: 576 },  // 块5上方（因为块5较宽）
   
   // 块6 - 关机区域
-  { x: 536, y: 1072 },
-  { x: 670, y: 1072 },
+  { x: 451, y: 704 },  // 块6上方
   
   // 块7 - 浅度工作区域
-  { x: 1206, y: 670 },
-  { x: 1340, y: 670 }
+  { x: 1088, y: 512 }  // 块7上方
 ]
 
 interface Cat {
@@ -120,6 +112,7 @@ interface Cat {
   velocityYManual: number
   isJumping: boolean
   direction: 'left' | 'right'
+  isMoving: boolean
 }
 
 interface Sunflower {
@@ -140,13 +133,14 @@ interface Block {
 export default function MarioCat() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [cat, setCat] = useState<Cat>({
-    x: 77,    // 设置为块1左侧的起始位置
-    y: 568,   // 设置为合适的起始高度
+    x: 192,  // 与块1的x坐标相同
+    y: 448,  // 调整y坐标，使黑猫位置更高
     velocityY: 0,
     velocityX: 0,
     velocityYManual: 0,
     isJumping: false,
-    direction: 'right'
+    direction: 'right',
+    isMoving: false
   })
   const [sunflowers, setSunflowers] = useState<Sunflower[]>([])
   const [blocks, setBlocks] = useState<Block[]>([])
