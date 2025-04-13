@@ -9,9 +9,9 @@ export default function Home() {
       <Navbar />
       
       {/* 游戏区域 */}
-      <div className="pt-24 pb-12 px-8">
+      <div className="pt-16">
         <div className="max-w-[1340px] mx-auto">
-          <div className="sticky top-20">
+          <div className="sticky top-16">
             <MarioCat />
           </div>
         </div>

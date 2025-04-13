@@ -82,26 +82,37 @@ const BLOCKS = [
 const SUNFLOWER_POSITIONS = [
   // 块1 - 默认起点区域
   { x: 192, y: 512 },  // 块1上方
+  { x: 256, y: 480 },  // 块1上方额外，向右偏移
   
   // 块2 - 启动区域
   { x: 386, y: 384 },  // 块2上方
+  { x: 450, y: 352 },  // 块2上方额外，向右偏移
   
   // 块3 - 深度工作区域
   { x: 576, y: 256 },  // 块3上方
+  { x: 640, y: 224 },  // 块3上方额外，向右偏移
   { x: 768, y: 256 },  // 块3上方（因为块3较宽）
+  { x: 832, y: 224 },  // 块3上方额外，向右偏移
   
   // 块4 - 午间空地区域
   { x: 960, y: 384 },  // 块4上方
+  { x: 1024, y: 352 },  // 块4上方额外，向右偏移
   
   // 块5 - 漫游玩耍区域
   { x: 646, y: 576 },  // 块5上方
+  { x: 710, y: 544 },  // 块5上方额外，向右偏移
   { x: 838, y: 576 },  // 块5上方（因为块5较宽）
+  { x: 902, y: 544 },  // 块5上方额外，向右偏移
   
   // 块6 - 关机区域
   { x: 451, y: 704 },  // 块6上方
+  { x: 515, y: 672 },  // 块6上方额外，向右偏移
   
   // 块7 - 浅度工作区域
-  { x: 1088, y: 512 }  // 块7上方
+  { x: 1088, y: 512 },  // 块7上方
+  { x: 1152, y: 480 },  // 块7上方额外，向右偏移
+  { x: 1216, y: 512 },  // 块7上方额外（因为块7较宽）
+  { x: 1280, y: 480 }   // 块7上方额外，向右偏移
 ]
 
 interface Cat {
@@ -398,19 +409,6 @@ export default function MarioCat() {
         })
       })
 
-      // 绘制向日葵
-      sunflowers.forEach(sunflower => {
-        if (!sunflower.collected && sunflowerImage.current) {
-          ctx.drawImage(
-            sunflowerImage.current,
-            sunflower.x,
-            sunflower.y,
-            SUNFLOWER_SIZE,
-            SUNFLOWER_SIZE
-          )
-        }
-      })
-
       // 绘制猫咪
       if (catImage.current) {
         ctx.save()
@@ -435,49 +433,18 @@ export default function MarioCat() {
         ctx.restore()
       }
 
-      // 绘制分数背景和分数
-      if (scoreBgImage.current) {
-        ctx.drawImage(
-          scoreBgImage.current,
-          0,  // x位置改为0
-          0,  // y位置改为0
-          SCORE_BG_WIDTH,
-          SCORE_BG_HEIGHT
-        )
-      }
-
-      // 绘制向日葵图标和分数
-      ctx.fillStyle = '#602719'  // 修改为新的颜色
-      ctx.font = 'bold 48px Arial'  // 字体大小
-      ctx.textAlign = 'left'
-      ctx.textBaseline = 'middle'
-      
-      const scoreText = `${score}`
-      const textMetrics = ctx.measureText(scoreText)
-      const textWidth = textMetrics.width
-      
-      // 计算向日葵和文本的总宽度
-      const totalWidth = 45 + 15 + textWidth  // 向日葵宽度 + 间距 + 文本宽度
-      const startX = (SCORE_BG_WIDTH - totalWidth) / 2  // 居中偏移
-      const centerY = SCORE_BG_HEIGHT / 2  // 垂直居中位置
-      
-      // 绘制向日葵图标
-      if (sunflowerImage.current) {
-        ctx.drawImage(
-          sunflowerImage.current,
-          startX,          // 从计算的起始位置开始
-          centerY - 22.5,  // 垂直居中（图标高度的一半）
-          45,             // 向日葵图标宽度
-          45              // 向日葵图标高度
-        )
-      }
-
-      // 绘制分数文本
-      ctx.fillText(
-        scoreText,
-        startX + 45 + 15,  // 向日葵右侧位置 + 间距
-        centerY           // 与向日葵垂直对齐
-      )
+      // 绘制向日葵
+      sunflowers.forEach(sunflower => {
+        if (!sunflower.collected && sunflowerImage.current) {
+          ctx.drawImage(
+            sunflowerImage.current,
+            sunflower.x,
+            sunflower.y,
+            SUNFLOWER_SIZE,
+            SUNFLOWER_SIZE
+          )
+        }
+      })
     }, 1000 / 60)
 
     return () => clearInterval(gameLoop)
@@ -485,6 +452,32 @@ export default function MarioCat() {
 
   return (
     <div className="relative">
+      {/* 向日葵计数 */}
+      <div className="fixed top-16 left-8 z-50">
+        {scoreBgImage.current && (
+          <div className="relative" style={{ width: SCORE_BG_WIDTH, height: SCORE_BG_HEIGHT }}>
+            <img
+              src={scoreBgImage.current.src}
+              alt="score background"
+              width={SCORE_BG_WIDTH}
+              height={SCORE_BG_HEIGHT}
+              className="absolute inset-0"
+            />
+            <div className="absolute inset-0 flex items-center justify-center gap-4">
+              {sunflowerImage.current && (
+                <img
+                  src={sunflowerImage.current.src}
+                  alt="sunflower"
+                  width={45}
+                  height={45}
+                />
+              )}
+              <span className="text-[#602719] text-4xl font-bold">{score}</span>
+            </div>
+          </div>
+        )}
+      </div>
+
       <canvas
         ref={canvasRef}
         width={1340}    // 设置为精确的宽度
