@@ -156,6 +156,22 @@ export default function MarioCat() {
   const scoreBgImage = useRef<HTMLImageElement | null>(null)  // 新增：计分背景图片
   const [assetsLoaded, setAssetsLoaded] = useState(false)
 
+  // 重置游戏状态
+  const resetGame = useCallback(() => {
+    setScore(0)
+    setSunflowers(prev => prev.map(sunflower => ({ ...sunflower, collected: false })))
+    setCat({
+      x: 192,
+      y: 448,
+      velocityY: 0,
+      velocityX: 0,
+      velocityYManual: 0,
+      isJumping: false,
+      direction: 'right',
+      isMoving: false
+    })
+  }, [])
+
   useEffect(() => {
     const loadImage = (src: string) => new Promise<HTMLImageElement>((resolve, reject) => {
       const img = new Image()
@@ -205,19 +221,25 @@ export default function MarioCat() {
     }
 
     generateSunflowers()
-  }, [assetsLoaded])
+    resetGame()
+  }, [assetsLoaded, resetGame])
 
   // 检查碰撞
   const checkCollision = useCallback((x: number, y: number, width: number, height: number) => {
     return blocks.find(block => {
-      const collision = (
+      return (
         x < block.x + block.width &&
         x + width > block.x &&
         y < block.y + block.height &&
         y + height > block.y
       )
-      // 如果发生碰撞，更新当前块名称并发送事件
-      if (collision) {
+    })
+  }, [blocks])
+
+  // 添加新的 useEffect 来处理块变化
+  useEffect(() => {
+    const handleBlockChange = (block: Block | undefined) => {
+      if (block) {
         const blockName = block.type.replace('块', '空间').replace('-', '：')
         setCurrentBlock(blockName)
         // 发送自定义事件
@@ -225,9 +247,12 @@ export default function MarioCat() {
           window.dispatchEvent(new CustomEvent('blockChange', { detail: blockName }))
         }
       }
-      return collision
-    })
-  }, [blocks])
+    }
+
+    // 检查当前碰撞的块
+    const blockCollision = checkCollision(cat.x, cat.y, CAT_WIDTH, CAT_HEIGHT)
+    handleBlockChange(blockCollision)
+  }, [cat.x, cat.y, checkCollision])
 
   // 处理键盘输入
   useEffect(() => {
