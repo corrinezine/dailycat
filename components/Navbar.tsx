@@ -1,15 +1,26 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 export default function Navbar() {
   const [showGuide, setShowGuide] = useState(false)
   const [currentBlock, setCurrentBlock] = useState<string>('')
 
-  // 添加一个全局事件监听器来接收块空间名称
-  if (typeof window !== 'undefined') {
-    window.addEventListener('blockChange', ((e: CustomEvent) => {
+  useEffect(() => {
+    // 添加事件监听器
+    const handleBlockChange = (e: CustomEvent) => {
       setCurrentBlock(e.detail)
-    }) as EventListener)
-  }
+    }
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('blockChange', handleBlockChange as EventListener)
+    }
+
+    // 清理函数
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('blockChange', handleBlockChange as EventListener)
+      }
+    }
+  }, []) // 空依赖数组，只在组件挂载时添加监听器
 
   return (
     <nav className="fixed top-0 left-0 right-0 h-16 bg-white/80 backdrop-blur-sm border-b border-gray-200 z-50 flex items-center justify-between px-8">
