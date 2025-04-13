@@ -422,7 +422,7 @@ export default function MarioCat() {
       }
 
       // 绘制向日葵图标和分数
-      ctx.fillStyle = '#FFD700'  // 金色
+      ctx.fillStyle = '#602719'  // 修改为新的颜色
       ctx.font = 'bold 48px Arial'  // 字体大小
       ctx.textAlign = 'left'
       ctx.textBaseline = 'middle'
